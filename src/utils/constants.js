@@ -1,9 +1,28 @@
-export const ROLES = Object.freeze({
-  ADMIN: "ADMIN",
-  USER: "USER",
-});
+// Roles de usuario
+export const ROLES = {
+  CLIENTE: "cliente",
+  REPARTIDOR: "repartidor",
+  ADMIN: "admin"
+};
 
-export const PRODUCT_STATUS = Object.freeze({
-  AVAILABLE: "AVAILABLE",
-  OUT_OF_STOCK: "OUT_OF_STOCK",
-});
+// Estados de pedidos
+export const ORDER_STATUS = {
+  PENDING: "pendiente",
+  IN_PROGRESS: "en_progreso",
+  COMPLETED: "completado",
+  CANCELLED: "cancelado"
+};
+
+// Estados de entregas
+export const DELIVERY_STATUS = {
+  IN_PROGRESS: "en_progreso",
+  DELIVERED: "entregado",
+  FAILED: "fallido"
+};
+
+// Estados de productos
+export const PRODUCT_STATUS = {
+  AVAILABLE: "disponible",
+  OUT_OF_STOCK: "sin_stock",
+  DISCONTINUED: "descontinuado"
+};
