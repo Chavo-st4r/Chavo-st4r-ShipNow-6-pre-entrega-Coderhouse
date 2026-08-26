@@ -1,51 +1,65 @@
-# Pre-entrega Módulo 3 — Manejo profesional de errores
+# Pre-entrega Módulo 4 — Logging y monitoreo básico
 
 ## Objetivo
-Centralizar el manejo de errores de la ShipNow API en una capa común que devuelva respuestas HTTP consistentes, en lugar de responder errores de forma aislada en cada ruta o controller.
+Incorporar un sistema de logging profesional en ShipNow API usando Winston.  
+El proyecto ya cuenta con arquitectura por capas, mocks y manejo centralizado de errores.  
+Ahora se agrega un logger centralizado para registrar eventos importantes, advertencias y errores, tanto en consola como en archivos.
 
-## Estructura implementada
-- Carpeta src/errors/ con:
-  - ValidationError.js: errores de validación (datos faltantes, cantidad inválida, estado incorrecto).
-  - NotFoundError.js: errores de recursos inexistentes (usuario, producto, etc.).
-  - DBError.js: errores de base de datos.
-  - error.dictionary.js: diccionario con mensajes y códigos HTTP estándar.
+## Herramienta utilizada
+- Winston como logger centralizado.
+- winston-daily-rotate-file para rotación de archivos.
 
-- Middleware global src/middlewares/error.middleware.js:
-  - Captura cualquier error lanzado en services o controllers.
-  - Devuelve siempre una respuesta uniforme en formato JSON.
+## Niveles de log
+- debug
+- http
+- info
+- warning
+- error
+- fatal
 
-- Services modificados:
-  - UserService: lanza ValidationError si falta email o está duplicado, NotFoundError si el usuario no existe.
-  - ProductService: lanza ValidationError si faltan datos o estado inválido, NotFoundError si no hay productos.
-  - MockService: valida cantidades, clientes, pedidos y repartidores. Lanza ValidationError en casos inválidos y DBError si falla la inserción en MongoDB.
+## Uso del logger
+- Inicio del servidor y conexión a MongoDB.
+- Middleware global de errores.
+- Servicios principales (UserService, ProductService, MockService).
+- Generación de datos mock.
+- Creación y eliminación de entidades importantes.
 
-## Formato de respuesta de error
-Todos los errores responden con una estructura clara y uniforme:
+## Persistencia de logs
+- Los errores y fatales se guardan en la carpeta `/logs`.
+- Los archivos se rotan diariamente y se conservan 7 días.
+- La carpeta `/logs` está incluida en `.gitignore` para evitar subir archivos generados al repositorio.
 
-{
-  "error": {
-    "type": "ValidationError",
-    "message": "Cantidad inválida de mocks",
-    "status": 400
-  }
-}
+## Endpoint de prueba
+- Ruta: `GET /api/logger/test`
+- Genera logs en todos los niveles definidos.
+- Respuesta: `{ "message": "Logs generados, revisar consola y archivos" }`
+- Permite verificar que los logs aparecen en consola y en archivos.
+
+## Diferencias entre entornos
+- Desarrollo: se muestran todos los niveles (incluyendo debug).
+- Producción: se registran solo info, warning, error y fatal.
 
 ## Cómo probar
-1. Usuarios
-   - GET /api/users/:id con un ID inexistente → devuelve NotFoundError.
-   - POST /api/users sin email → devuelve ValidationError.
-   - POST /api/users con email ya registrado → devuelve ValidationError.
+1. Levantar el servidor con `npm start`.
+2. Acceder a `http://localhost:3000/api/logger/test`.
+3. Revisar la consola: deben aparecer todos los niveles con timestamp.
+4. Revisar la carpeta `/logs`: solo deben guardarse los niveles error y fatal.
 
-2. Productos
-   - POST /api/products sin nombre o precio → devuelve ValidationError.
-   - POST /api/products con estado inválido → devuelve ValidationError.
-   - GET /api/products cuando no hay productos → devuelve NotFoundError.
+## Ejemplo de salida esperada
 
-3. Mocks
-   - POST /api/mocks/users?qty=-5 → devuelve ValidationError (cantidad inválida).
-   - POST /api/mocks/orders sin clientes → devuelve ValidationError.
-   - POST /api/mocks/deliveries sin pedidos o repartidores → devuelve ValidationError.
-   - Si falla la inserción en MongoDB → devuelve DBError.
+### En consola (modo desarrollo)
+2026-08-26 18:05:12 [debug] Log nivel debug
+2026-08-26 18:05:12 [http] Log nivel http
+2026-08-26 18:05:12 [info] Log nivel info
+2026-08-26 18:05:12 [warning] Log nivel warning
+2026-08-26 18:05:12 [error] Log nivel error
+2026-08-26 18:05:12 [fatal] Log nivel fatal
 
-## Conclusión
-La API ahora maneja errores de forma centralizada, con clases personalizadas, un diccionario de errores y un middleware global. Esto asegura respuestas uniformes y predecibles en todos los módulos, incluyendo el de mocks. Los errores se lanzan en la capa de service y nunca se responden directamente en los controllers, manteniendo la arquitectura por capas y un formato consistente de salida.
+### En archivo `/logs/error-2026-08-26.log`
+2026-08-26 18:05:12 [error] Log nivel error
+2026-08-26 18:05:12 [fatal] Log nivel fatal
+
+## Notas
+- En consola se muestran todos los niveles con colores y timestamp.
+- En archivos solo se guardan error y fatal, con rotación diaria y conservación de 7 días.
+- En producción no se muestran debug ni http en consola, solo desde info hacia arriba.
