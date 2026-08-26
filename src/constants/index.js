@@ -13,6 +13,13 @@ export const ORDER_STATUS = {
   CANCELLED: "cancelado"
 };
 
+// Prioridades de pedidos
+export const ORDER_PRIORITY = {
+  LOW: "baja",
+  MEDIUM: "media",
+  HIGH: "alta"
+};
+
 // Estados de entregas
 export const DELIVERY_STATUS = {
   IN_PROGRESS: "en_progreso",

@@ -3,12 +3,16 @@ import mongoose from "mongoose";
 import mockRoutes from "./routes/mock.routes.js";
 import { config } from "./config/env.config.js";
 import productRoutes from "./routes/product.routes.js";
+import userRoutes from "./routes/user.routes.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 app.use(express.json());
+app.use(errorHandler);
 
 app.use("/api/mocks", mockRoutes);
-app.use("/products", productRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 mongoose.connect(config.mongoUri)
   .then(() => {

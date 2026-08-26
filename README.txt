@@ -1,63 +1,51 @@
-# ShipNow API - Módulo de Mocking
+# Pre-entrega Módulo 3 — Manejo profesional de errores
 
-## Descripción
-Este módulo agrega endpoints para generar y/o insertar datos simulados en MongoDB.  
-Se implementa siguiendo arquitectura por capas (Controller, Service, Repository, Model) y usando constantes centralizadas.
+## Objetivo
+Centralizar el manejo de errores de la ShipNow API en una capa común que devuelva respuestas HTTP consistentes, en lugar de responder errores de forma aislada en cada ruta o controller.
 
-## Requisitos previos
-- Node.js v24+
-- MongoDB corriendo localmente
-- Archivo `.env` en la raíz con las siguientes variables:
+## Estructura implementada
+- Carpeta src/errors/ con:
+  - ValidationError.js: errores de validación (datos faltantes, cantidad inválida, estado incorrecto).
+  - NotFoundError.js: errores de recursos inexistentes (usuario, producto, etc.).
+  - DBError.js: errores de base de datos.
+  - error.dictionary.js: diccionario con mensajes y códigos HTTP estándar.
 
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/shipnow
-NODE_ENV=development
+- Middleware global src/middlewares/error.middleware.js:
+  - Captura cualquier error lanzado en services o controllers.
+  - Devuelve siempre una respuesta uniforme en formato JSON.
 
-## Cómo correr el proyecto
-1. Instalar dependencias:
-   npm install
+- Services modificados:
+  - UserService: lanza ValidationError si falta email o está duplicado, NotFoundError si el usuario no existe.
+  - ProductService: lanza ValidationError si faltan datos o estado inválido, NotFoundError si no hay productos.
+  - MockService: valida cantidades, clientes, pedidos y repartidores. Lanza ValidationError en casos inválidos y DBError si falla la inserción en MongoDB.
 
-2. Levantar MongoDB:
-   mongod --dbpath ~/shipnow-api/mongo-data
+## Formato de respuesta de error
+Todos los errores responden con una estructura clara y uniforme:
 
-3. Iniciar el servidor:
-   npm run dev
-
-El server quedará escuchando en http://localhost:3000.
-
-## Endpoints de Mocking
-
-### Usuarios
-- GET /api/mocks/users?qty=2  
-  Devuelve usuarios simulados en JSON (no se guardan en DB).
-
-- POST /api/mocks/seed/users?qty=5  
-  Inserta usuarios simulados en MongoDB.  
-  Respuesta esperada:
-  {
-    "insertados": 5,
-    "coleccion": "usuarios"
+{
+  "error": {
+    "type": "ValidationError",
+    "message": "Cantidad inválida de mocks",
+    "status": 400
   }
+}
 
-### Pedidos
-- POST /api/mocks/seed/orders?qty=3  
-  Inserta pedidos simulados asociados a clientes.  
-  Respuesta esperada:
-  {
-    "insertados": 3,
-    "coleccion": "pedidos"
-  }
+## Cómo probar
+1. Usuarios
+   - GET /api/users/:id con un ID inexistente → devuelve NotFoundError.
+   - POST /api/users sin email → devuelve ValidationError.
+   - POST /api/users con email ya registrado → devuelve ValidationError.
 
-### Entregas
-- POST /api/mocks/seed/deliveries?qty=2  
-  Inserta entregas simuladas asociadas a pedidos y repartidores.  
-  Respuesta esperada:
-  {
-    "insertados": 2,
-    "coleccion": "entregas"
-  }
+2. Productos
+   - POST /api/products sin nombre o precio → devuelve ValidationError.
+   - POST /api/products con estado inválido → devuelve ValidationError.
+   - GET /api/products cuando no hay productos → devuelve NotFoundError.
 
-## Checklist de pruebas
-1. Server levantado con npm run dev.
-2. MongoDB corriendo (mongod).
-3. Probar cada endpoint
+3. Mocks
+   - POST /api/mocks/users?qty=-5 → devuelve ValidationError (cantidad inválida).
+   - POST /api/mocks/orders sin clientes → devuelve ValidationError.
+   - POST /api/mocks/deliveries sin pedidos o repartidores → devuelve ValidationError.
+   - Si falla la inserción en MongoDB → devuelve DBError.
+
+## Conclusión
+La API ahora maneja errores de forma centralizada, con clases personalizadas, un diccionario de errores y un middleware global. Esto asegura respuestas uniformes y predecibles en todos los módulos, incluyendo el de mocks. Los errores se lanzan en la capa de service y nunca se responden directamente en los controllers, manteniendo la arquitectura por capas y un formato consistente de salida.

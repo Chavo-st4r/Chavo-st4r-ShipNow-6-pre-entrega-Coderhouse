@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DELIVERY_STATUS } from "../utils/constants.js";
+import { DELIVERY_STATUS } from "../constants/index.js";
 
 const deliverySchema = new mongoose.Schema({
   pedidoId: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },

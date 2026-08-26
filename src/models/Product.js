@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PRODUCT_STATUS } from "../utils/constants.js";
+import { PRODUCT_STATUS } from "../constants/index.js";
 
 const productSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
