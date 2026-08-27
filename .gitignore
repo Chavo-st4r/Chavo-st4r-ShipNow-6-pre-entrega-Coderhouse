@@ -8,9 +8,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-logs/
 
 # Sistema
 .DS_Store
 
-
+# Logs de Winston
+logs/

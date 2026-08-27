@@ -1,65 +1,113 @@
-# Pre-entrega Módulo 4 — Logging y monitoreo básico
+ShipNow API - Pre‑entrega 5
+===========
 
-## Objetivo
-Incorporar un sistema de logging profesional en ShipNow API usando Winston.  
-El proyecto ya cuenta con arquitectura por capas, mocks y manejo centralizado de errores.  
-Ahora se agrega un logger centralizado para registrar eventos importantes, advertencias y errores, tanto en consola como en archivos.
+Descripción
+-----------
+API RESTful desarrollada con Node.js, Express y MongoDB para la gestión de:
+- Usuarios
+- Productos
+- Pedidos
+- Entregas
+- Mocks (datos falsos para pruebas)
+- Logger (validación de logs)
 
-## Herramienta utilizada
-- Winston como logger centralizado.
-- winston-daily-rotate-file para rotación de archivos.
+Arquitectura
+------------
+El proyecto sigue una arquitectura por capas:
+- Models: Definición de esquemas de MongoDB
+- Services: Lógica de negocio y acceso a datos
+- Controllers: Manejo de peticiones y respuestas
+- Routes: Definición de endpoints
+- Config: Configuración de Swagger y otros módulos
 
-## Niveles de log
-- debug
-- http
-- info
-- warning
-- error
-- fatal
+Instalación
+-----------
+1. Clonar el repositorio
+2. Instalar dependencias:
+   npm install
+3. Levantar el servidor:
+   npm run dev
+4. Conexión a MongoDB:
+   mongodb://localhost:27017/shipnow
 
-## Uso del logger
-- Inicio del servidor y conexión a MongoDB.
-- Middleware global de errores.
-- Servicios principales (UserService, ProductService, MockService).
-- Generación de datos mock.
-- Creación y eliminación de entidades importantes.
+Endpoints principales
+---------------------
+Usuarios (/api/users)
+- GET /api/users → Listar usuarios
+- POST /api/users → Crear usuario
+- GET /api/users/{id} → Obtener usuario por ID
+- DELETE /api/users/{id} → Eliminar usuario
 
-## Persistencia de logs
-- Los errores y fatales se guardan en la carpeta `/logs`.
-- Los archivos se rotan diariamente y se conservan 7 días.
-- La carpeta `/logs` está incluida en `.gitignore` para evitar subir archivos generados al repositorio.
+Productos (/api/products)
+- GET /api/products → Listar productos
+- POST /api/products → Crear producto
+- GET /api/products/{id} → Obtener producto por ID
+- DELETE /api/products/{id} → Eliminar producto
 
-## Endpoint de prueba
-- Ruta: `GET /api/logger/test`
-- Genera logs en todos los niveles definidos.
-- Respuesta: `{ "message": "Logs generados, revisar consola y archivos" }`
-- Permite verificar que los logs aparecen en consola y en archivos.
+Pedidos (/api/orders)
+- GET /api/orders → Listar pedidos
+- POST /api/orders → Crear pedido
+- GET /api/orders/{id} → Obtener pedido por ID
+- DELETE /api/orders/{id} → Eliminar pedido
 
-## Diferencias entre entornos
-- Desarrollo: se muestran todos los niveles (incluyendo debug).
-- Producción: se registran solo info, warning, error y fatal.
+Entregas (/api/deliveries)
+- GET /api/deliveries → Listar entregas
+- POST /api/deliveries → Crear entrega
+- GET /api/deliveries/{id} → Obtener entrega por ID
+- DELETE /api/deliveries/{id} → Eliminar entrega
 
-## Cómo probar
-1. Levantar el servidor con `npm start`.
-2. Acceder a `http://localhost:3000/api/logger/test`.
-3. Revisar la consola: deben aparecer todos los niveles con timestamp.
-4. Revisar la carpeta `/logs`: solo deben guardarse los niveles error y fatal.
+Mocks (/api/mocks)
+- GET /api/mocks/users → Generar usuarios falsos
+- GET /api/mocks/orders → Generar pedidos falsos
+- GET /api/mocks/deliveries → Generar entregas falsas
+- POST /api/mocks/seed/users → Insertar usuarios falsos
+- POST /api/mocks/seed/orders → Insertar pedidos falsos
+- POST /api/mocks/seed/deliveries → Insertar entregas falsas
 
-## Ejemplo de salida esperada
+Logger (/api/logger)
+- GET /api/logger/test → Disparar logs en todos los niveles
 
-### En consola (modo desarrollo)
-2026-08-26 18:05:12 [debug] Log nivel debug
-2026-08-26 18:05:12 [http] Log nivel http
-2026-08-26 18:05:12 [info] Log nivel info
-2026-08-26 18:05:12 [warning] Log nivel warning
-2026-08-26 18:05:12 [error] Log nivel error
-2026-08-26 18:05:12 [fatal] Log nivel fatal
+Swagger
+-------
+La documentación interactiva está disponible en:
+http://localhost:3000/api/docs
 
-### En archivo `/logs/error-2026-08-26.log`
-2026-08-26 18:05:12 [error] Log nivel error
-2026-08-26 18:05:12 [fatal] Log nivel fatal
+Schemas principales
+-------------------
+User:
+- _id: string
+- nombre: string
+- email: string
+- rol: string
 
-## Notas
-- En consola se muestran todos los niveles con colores y timestamp.
-- En archivos solo se guardan error y fatal, con rotación diaria y conservación de 7 días.
-- En producción no se muestran debug ni http en consola, solo desde info hacia arriba.
+Product:
+- _id: string
+- nombre: string
+- descripcion: string
+- precio: number
+- stock: number
+
+Order:
+- _id: string
+- clienteId: string
+- estado: string
+- prioridad: string
+
+Delivery:
+- _id: string
+- pedidoId: string
+- repartidorId: string
+- estado: string
+
+SuccessResponse:
+- message: string
+
+ErrorResponse:
+- error: string
+- message: string
+
+Notas
+-----
+- Proyecto alineado con arquitectura por capas.
+- Todos los módulos expuestos y documentados en Swagger.
+- Listo para pruebas en Postman y entrega académica.
