@@ -1,5 +1,5 @@
-ShipNow API - Pre‑entrega 5
-===========
+ShipNow API - Pre‑entrega 6
+===========================
 
 Descripción
 -----------
@@ -11,103 +11,79 @@ API RESTful desarrollada con Node.js, Express y MongoDB para la gestión de:
 - Mocks (datos falsos para pruebas)
 - Logger (validación de logs)
 
-Arquitectura
-------------
-El proyecto sigue una arquitectura por capas:
-- Models: Definición de esquemas de MongoDB
-- Services: Lógica de negocio y acceso a datos
-- Controllers: Manejo de peticiones y respuestas
-- Routes: Definición de endpoints
-- Config: Configuración de Swagger y otros módulos
+Esta entrega corresponde a la Pre‑entrega 6 del curso Backend II, donde se incorporan
+tests funcionales automatizados con Mocha, Chai y Supertest.
+
+Objetivos
+---------
+- Configurar entorno de testing separado del de desarrollo
+- Incorporar Mocha, Chai y Supertest
+- Validar endpoints principales
+- Probar casos exitosos y errores esperados
+- Documentar ejecución de tests
+
+Entorno de Testing
+------------------
+Se utiliza un archivo `.env.test` con variables descartables:
+- PORT=4000
+- MONGODB_URI=mongodb://localhost:27017/shipnow_test
+- NODE_ENV=test
+- JWT_SECRET=testsecret
+
+La base de datos de testing es independiente de la de desarrollo.
 
 Instalación
 -----------
 1. Clonar el repositorio
 2. Instalar dependencias:
    npm install
-3. Levantar el servidor:
+3. Levantar el servidor en desarrollo:
    npm run dev
-4. Conexión a MongoDB:
-   mongodb://localhost:27017/shipnow
+4. Ejecutar los tests:
+   npm test
 
-Endpoints principales
----------------------
+Herramientas
+------------
+- Mocha: framework de ejecución de tests
+- Chai: librería de aserciones
+- Supertest: peticiones HTTP a la API
+
+Cobertura de Tests
+------------------
 Usuarios (/api/users)
-- GET /api/users → Listar usuarios
-- POST /api/users → Crear usuario
-- GET /api/users/{id} → Obtener usuario por ID
-- DELETE /api/users/{id} → Eliminar usuario
+- Listar usuarios
+- Crear usuario válido
+- Error por datos incompletos
 
 Productos (/api/products)
-- GET /api/products → Listar productos
-- POST /api/products → Crear producto
-- GET /api/products/{id} → Obtener producto por ID
-- DELETE /api/products/{id} → Eliminar producto
+- Listar productos
+- Crear producto válido
+- Error por ID inexistente
 
 Pedidos (/api/orders)
-- GET /api/orders → Listar pedidos
-- POST /api/orders → Crear pedido
-- GET /api/orders/{id} → Obtener pedido por ID
-- DELETE /api/orders/{id} → Eliminar pedido
+- Listar pedidos
+- Crear pedido válido
+- Error por ID inexistente
 
 Entregas (/api/deliveries)
-- GET /api/deliveries → Listar entregas
-- POST /api/deliveries → Crear entrega
-- GET /api/deliveries/{id} → Obtener entrega por ID
-- DELETE /api/deliveries/{id} → Eliminar entrega
+- Listar entregas
+- Crear entrega válida
+- Error por datos incompletos
 
 Mocks (/api/mocks)
-- GET /api/mocks/users → Generar usuarios falsos
-- GET /api/mocks/orders → Generar pedidos falsos
-- GET /api/mocks/deliveries → Generar entregas falsas
-- POST /api/mocks/seed/users → Insertar usuarios falsos
-- POST /api/mocks/seed/orders → Insertar pedidos falsos
-- POST /api/mocks/seed/deliveries → Insertar entregas falsas
+- Generar usuarios falsos
+- Insertar usuarios falsos
+- Generar pedidos falsos
 
 Logger (/api/logger)
-- GET /api/logger/test → Disparar logs en todos los niveles
+- Endpoint de prueba
 
-Swagger
--------
-La documentación interactiva está disponible en:
-http://localhost:3000/api/docs
-
-Schemas principales
--------------------
-User:
-- _id: string
-- nombre: string
-- email: string
-- rol: string
-
-Product:
-- _id: string
-- nombre: string
-- descripcion: string
-- precio: number
-- stock: number
-
-Order:
-- _id: string
-- clienteId: string
-- estado: string
-- prioridad: string
-
-Delivery:
-- _id: string
-- pedidoId: string
-- repartidorId: string
-- estado: string
-
-SuccessResponse:
-- message: string
-
-ErrorResponse:
-- error: string
-- message: string
+Swagger (/api/docs)
+- Ruta responde correctamente
 
 Notas
 -----
-- Proyecto alineado con arquitectura por capas.
-- Todos los módulos expuestos y documentados en Swagger.
-- Listo para pruebas en Postman y entrega académica.
+- Los datos de prueba son controlados y descartables.
+- Se valida status HTTP y estructura de respuesta.
+- Los tests no dependen de datos reales ni del estado previo de la base.
+- Proyecto listo para entrega académica.
